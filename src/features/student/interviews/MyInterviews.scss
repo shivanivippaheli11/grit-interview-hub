@@ -37,6 +37,16 @@
       font-size: 14px;
     }
 
+    .rebook-button {
+      margin-top: 12px;
+      padding: 9px 16px;
+      border: none;
+      border-radius: 8px;
+      background: vars.$primary-color;
+      color: white;
+      font-weight: 600;
+    }
+
     &.confirmation {
       background: #eef0ff;
       border-color: vars.$primary-color;
@@ -55,7 +65,8 @@
       color: vars.$danger-color;
     }
 
-    &.retake {
+    &.retake,
+    &.warning {
       background: #fff6e8;
       border-color: vars.$warning-color;
       color: vars.$warning-color;

@@ -31,10 +31,18 @@ export const addAvailableSlot = (
   interviewerId: string,
   interviewerName: string
 ): InterviewSlot => {
+  if (!date) {
+    throw new Error("Please choose a date.");
+  }
+
+  if (!/^\d{2}:\d{2}$/.test(startTime)) {
+    throw new Error("Please choose a valid start time.");
+  }
+
   const startMinutes = toMinutes(startTime);
   const endMinutes = startMinutes + 30;
 
-  if (endMinutes > 24 * 60) {
+  if (endMinutes >= 24 * 60) {
     throw new Error("The slot must end before midnight.");
   }
 

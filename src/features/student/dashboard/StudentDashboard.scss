@@ -73,6 +73,12 @@
   border-radius: 10px;
 }
 
+.interview-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .progress-track {
   height: 8px;
   background: #eeeef5;
@@ -170,6 +176,80 @@
 
 .book-button:hover {
   background: #5048e5;
+}
+
+.book-button.secondary {
+  background: white;
+  color: vars.$primary-color;
+  border: 1px solid #d9d6ff;
+}
+
+.book-button.secondary:hover {
+  background: #eeedff;
+}
+
+.interview-card.journey-passed {
+  background: #ecfdf3;
+  border-color: #b7ebcd;
+
+  .interview-card-icon,
+  .status-label {
+    color: #16a36a;
+  }
+
+  .interview-card-icon {
+    background: #d1fadf;
+  }
+}
+
+.interview-card.journey-retake,
+.interview-card.journey-failed,
+.interview-card.journey-under-review {
+  background: #fff8eb;
+  border-color: #fde3b0;
+
+  .interview-card-icon,
+  .status-label {
+    color: #b45309;
+  }
+
+  .interview-card-icon {
+    background: #fef0c7;
+  }
+}
+
+.interview-card.journey-nullified {
+  background: #fef3f2;
+  border-color: #fecdca;
+
+  .interview-card-icon,
+  .status-label {
+    color: #d92d20;
+  }
+
+  .interview-card-icon {
+    background: #fee4e2;
+  }
+}
+
+.interview-card.journey-not-eligible {
+  background: #f8f9fb;
+  border-color: vars.$border-color;
+}
+
+.badge-card span.earned {
+  background: #d1fadf;
+  color: #027a48;
+}
+
+.badge-card span.nullified {
+  background: #fee4e2;
+  color: #b42318;
+}
+
+.badge-card span.under-review {
+  background: #fef0c7;
+  color: #b45309;
 }
 
 @media (max-width: 768px) {

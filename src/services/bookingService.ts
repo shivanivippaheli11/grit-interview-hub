@@ -3,8 +3,29 @@ import type {
   InterviewBooking,
   InterviewOutcome,
 } from "../types/booking.types";
+import { mockStudents } from "../data/mockStudents";
+import { getStudentBadgeRecord } from "./badgeService";
 
 const STORAGE_KEY = "grit_interview_bookings";
+
+export type JourneyState =
+  | "not-eligible"
+  | "ready-to-book"
+  | "booked"
+  | "retake"
+  | "failed"
+  | "passed"
+  | "under-review"
+  | "nullified";
+
+export interface InterviewJourney {
+  state: JourneyState;
+  canBook: boolean;
+  activeBooking?: InterviewBooking;
+  latestResult?: InterviewBooking;
+}
+
+const BOOKABLE_STATES: JourneyState[] = ["ready-to-book", "retake", "failed"];
 
 export const getBookings = (): InterviewBooking[] => {
   const data = localStorage.getItem(STORAGE_KEY);
@@ -21,36 +42,56 @@ export const getStudentBooking = (
   );
 };
 
-export const getStudentInterview = (
+const byLatestBooking = (a: InterviewBooking, b: InterviewBooking) =>
+  new Date(b.bookedAt).getTime() - new Date(a.bookedAt).getTime();
+
+export const getLatestResult = (
   studentId: string
-): InterviewBooking | undefined => {
-  const studentBookings = getBookings().filter(
+): InterviewBooking | undefined =>
+  getBookings()
+    .filter(
+      (booking) =>
+        booking.studentId === studentId && booking.status === "completed"
+    )
+    .sort(byLatestBooking)[0];
+
+export const getInterviewJourney = (studentId: string): InterviewJourney => {
+  const student = mockStudents.find((item) => item.id === studentId);
+  const badgeRecord = getStudentBadgeRecord(studentId);
+  const activeBooking = getStudentBooking(studentId);
+  const latestResult = getLatestResult(studentId);
+  const hasPassed = getBookings().some(
     (booking) =>
       booking.studentId === studentId &&
-      booking.status !== "cancelled"
+      booking.status === "completed" &&
+      booking.outcome === "pass"
   );
 
-  // Prioritize an active confirmed booking.
-  const confirmedBooking = studentBookings
-    .filter((booking) => booking.status === "confirmed")
-    .sort(
-      (a, b) =>
-        new Date(b.bookedAt).getTime() -
-        new Date(a.bookedAt).getTime()
-    )[0];
+  let state: JourneyState;
 
-  if (confirmedBooking) {
-    return confirmedBooking;
-  }
+  if (badgeRecord?.nullified) state = "nullified";
+  else if (badgeRecord?.malpracticeFlagged) state = "under-review";
+  else if (!student || student.interviewStatus !== "eligible") state = "not-eligible";
+  else if (hasPassed) state = "passed";
+  else if (activeBooking) state = "booked";
+  else if (latestResult?.outcome === "retake") state = "retake";
+  else if (latestResult?.outcome === "fail") state = "failed";
+  else state = "ready-to-book";
 
-  // If no active booking exists, show the latest completed interview.
-  return studentBookings
-    .filter((booking) => booking.status === "completed")
-    .sort(
-      (a, b) =>
-        new Date(b.bookedAt).getTime() -
-        new Date(a.bookedAt).getTime()
-    )[0];
+  return {
+    state,
+    canBook: BOOKABLE_STATES.includes(state),
+    activeBooking,
+    latestResult,
+  };
+};
+
+export const BLOCKED_BOOKING_MESSAGES: Partial<Record<JourneyState, string>> = {
+  "not-eligible": "Complete all required skills to unlock interview booking.",
+  booked: "You already have an active booking.",
+  passed: "You have already passed this interview.",
+  "under-review": "Booking is on hold while your badge is under review.",
+  nullified: "Booking is unavailable because your badge was nullified.",
 };
 
 export const isSlotBooked = (slotId: string): boolean => {
@@ -63,12 +104,16 @@ export const isSlotBooked = (slotId: string): boolean => {
 };
 
 export const createBooking = (booking: InterviewBooking): void => {
-  if (isSlotBooked(booking.slot.id)) {
-    throw new Error("This slot is no longer available.");
+  const journey = getInterviewJourney(booking.studentId);
+
+  if (!journey.canBook) {
+    throw new Error(
+      BLOCKED_BOOKING_MESSAGES[journey.state] ?? "Booking is not available."
+    );
   }
 
-  if (getStudentBooking(booking.studentId)) {
-    throw new Error("You already have an active booking.");
+  if (isSlotBooked(booking.slot.id)) {
+    throw new Error("This slot is no longer available.");
   }
 
   localStorage.setItem(
@@ -83,6 +128,15 @@ export const updateInterviewOutcome = (
   feedback: string
 ): void => {
   const bookings = getBookings();
+  const target = bookings.find((booking) => booking.id === bookingId);
+
+  if (!target || target.status !== "confirmed") {
+    throw new Error("Outcomes can only be recorded for confirmed interviews.");
+  }
+
+  if (outcome !== "pass" && !feedback.trim()) {
+    throw new Error("Please add feedback so the student knows what to improve.");
+  }
 
   const updatedBookings = bookings.map((booking) =>
     booking.id === bookingId
@@ -90,7 +144,7 @@ export const updateInterviewOutcome = (
           ...booking,
           status: "completed" as const,
           outcome,
-          feedback,
+          feedback: feedback.trim(),
         }
       : booking
   );

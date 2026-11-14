@@ -1,20 +1,29 @@
 
 import { mockStudents } from "../../../data/mockStudents";
-import { getBookings } from "../../../services/bookingService";
+import {
+    getInterviewJourney,
+    type JourneyState,
+} from "../../../services/bookingService";
 import "./EligibleStudents.scss";
 
+const STATE_LABELS: Record<JourneyState, { label: string; className: string }> = {
+    "not-eligible": { label: "Not Eligible", className: "in-progress" },
+    "ready-to-book": { label: "Not Booked", className: "not-booked" },
+    booked: { label: "Booked", className: "booked" },
+    retake: { label: "Retake – Not Rebooked", className: "retake" },
+    failed: { label: "Fail – Not Rebooked", className: "fail" },
+    passed: { label: "PASS", className: "pass" },
+    "under-review": { label: "Badge Under Review", className: "retake" },
+    nullified: { label: "Badge Nullified", className: "fail" },
+};
+
+const NEEDS_BOOKING: JourneyState[] = ["ready-to-book", "retake", "failed"];
+
 const EligibleStudents = () => {
-    const bookings = getBookings();
-
-    const students = mockStudents.map((student) => {
-        const booking = bookings.find(
-            (item) =>
-                item.studentId === student.id &&
-                item.status !== "cancelled"
-        );
-
-        return { ...student, booking };
-    });
+    const students = mockStudents.map((student) => ({
+        ...student,
+        journey: getInterviewJourney(student.id),
+    }));
 
     return (
         <section className="eligible-students">
@@ -41,10 +50,8 @@ const EligibleStudents = () => {
                 <div>
                     <span>Not Booked</span>
                     <h3>
-                        {students.filter(
-                            (student) =>
-                                student.interviewStatus === "eligible" &&
-                                !student.booking
+                        {students.filter((student) =>
+                            NEEDS_BOOKING.includes(student.journey.state)
                         ).length}
                     </h3>
                 </div>
@@ -70,7 +77,7 @@ const EligibleStudents = () => {
                                 const isEligible =
                                     student.interviewStatus === "eligible";
 
-                                const booking = student.booking;
+                                const stateLabel = STATE_LABELS[student.journey.state];
 
                                 return (
                                     <tr key={student.id}>
@@ -98,27 +105,9 @@ const EligibleStudents = () => {
                                         </td>
 
                                         <td>
-                                            {!isEligible ? (
-                                                <span className="student-status in-progress">
-                                                    Not Eligible
-                                                </span>
-                                            ) : booking?.status === "completed" ? (
-                                                <span
-                                                    className={`student-status ${booking.outcome || "completed"}`}
-                                                >
-                                                    {booking.outcome
-                                                        ? booking.outcome.toUpperCase()
-                                                        : "Completed"}
-                                                </span>
-                                            ) : booking ? (
-                                                <span className="student-status booked">
-                                                    Booked
-                                                </span>
-                                            ) : (
-                                                <span className="student-status not-booked">
-                                                    Not Booked
-                                                </span>
-                                            )}
+                                            <span className={`student-status ${stateLabel.className}`}>
+                                                {stateLabel.label}
+                                            </span>
                                         </td>
                                     </tr>
                                 );

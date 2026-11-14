@@ -9,11 +9,13 @@ import {
 } from "lucide-react";
 
 import {
+  BLOCKED_BOOKING_MESSAGES,
   createBooking,
+  getInterviewJourney,
   isSlotBooked,
-  getStudentBooking,
 } from "../../../services/bookingService";
 import { getSlots } from "../../../services/availabilityService";
+import { mockStudents } from "../../../data/mockStudents";
 
 import type {
   InterviewSlot,
@@ -30,16 +32,21 @@ const BookingPage = ({ studentId }: BookingPageProps) => {
   const navigate = useNavigate();
 
   const [slots] = useState<InterviewSlot[]>(getSlots);
-  const [selectedDate, setSelectedDate] = useState("2026-11-18");
+  const [selectedDate, setSelectedDate] = useState(
+    () => [...getSlots()].sort((a, b) => a.date.localeCompare(b.date))[0]?.date ?? ""
+  );
   const [selectedSlot, setSelectedSlot] =
     useState<InterviewSlot | null>(null);
   const [error, setError] = useState("");
-  const [confirmed, setConfirmed] = useState(false);
+  const [confirmedBooking, setConfirmedBooking] =
+    useState<InterviewBooking | null>(null);
 
-  // Check whether the student already has an active booking
-  const existingBooking = getStudentBooking(studentId);
+  const student =
+    mockStudents.find((item) => item.id === studentId) ?? mockStudents[0];
+  const journey = getInterviewJourney(studentId);
+  const existingBooking = journey.activeBooking;
 
-  const dates = [...new Set(slots.map((slot) => slot.date))];
+  const dates = [...new Set(slots.map((slot) => slot.date))].sort();
 
   const availableSlots = slots.filter(
     (slot) =>
@@ -47,12 +54,15 @@ const BookingPage = ({ studentId }: BookingPageProps) => {
       !isSlotBooked(slot.id)
   );
 
-  const handleBooking = () => {
-    if (existingBooking) {
-      setError("You already have an active booking.");
-      return;
-    }
+  const formatLongDate = (date: string) =>
+    new Date(`${date}T00:00:00`).toLocaleDateString("en-IN", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
 
+  const handleBooking = () => {
     if (!selectedSlot) {
       setError("Please select an interview slot.");
       return;
@@ -62,8 +72,8 @@ const BookingPage = ({ studentId }: BookingPageProps) => {
       const booking: InterviewBooking = {
         id: `BOOK-${Date.now()}`,
         studentId,
-        badge: "Novice",
-        track: "AI Product Engineering",
+        badge: student.badge,
+        track: student.track,
         slot: selectedSlot,
         status: "confirmed",
         bookedAt: new Date().toISOString(),
@@ -71,7 +81,7 @@ const BookingPage = ({ studentId }: BookingPageProps) => {
 
       createBooking(booking);
       setError("");
-      setConfirmed(true);
+      setConfirmedBooking(booking);
     } catch (err) {
       setError(
         err instanceof Error
@@ -81,16 +91,51 @@ const BookingPage = ({ studentId }: BookingPageProps) => {
     }
   };
 
-  if (confirmed) {
+  if (confirmedBooking) {
     return (
       <div className="booking-success">
         <CheckCircle size={60} color="#16a36a" />
-        <h2>Interview Booked Successfully!</h2>
-        <p>Your interview slot has been confirmed.</p>
+        <h2>Interview booked!</h2>
+        <p>
+          Your {student.track} – {student.badge} interview is on{" "}
+          <strong>
+            {formatLongDate(confirmedBooking.slot.date)} at{" "}
+            {confirmedBooking.slot.startTime}
+          </strong>{" "}
+          with {confirmedBooking.slot.interviewerName}. Join 5 minutes early
+          from My Interviews. Need to change it? You can cancel from My
+          Interviews and pick a new slot.
+        </p>
 
         <button onClick={() => navigate("/student/dashboard")}>
           Back to Dashboard
         </button>
+      </div>
+    );
+  }
+
+  if (!existingBooking && !journey.canBook) {
+    return (
+      <div className="booking-page">
+        <div className="booking-heading">
+          <h2>Book Your Interview</h2>
+        </div>
+
+        <div className="existing-booking">
+          <div className="existing-booking-header">
+            <CalendarDays size={28} />
+            <h3>Booking unavailable</h3>
+          </div>
+
+          <p>{BLOCKED_BOOKING_MESSAGES[journey.state]}</p>
+
+          <button
+            className="confirm-booking"
+            onClick={() => navigate("/student/dashboard")}
+          >
+            Back to Dashboard
+          </button>
+        </div>
       </div>
     );
   }
@@ -123,7 +168,7 @@ const BookingPage = ({ studentId }: BookingPageProps) => {
 
             <p>
               <CalendarDays size={17} />
-              {existingBooking.slot.date}
+              {formatLongDate(existingBooking.slot.date)}
             </p>
 
             <p>
@@ -148,7 +193,7 @@ const BookingPage = ({ studentId }: BookingPageProps) => {
         <>
           <div className="booking-details">
             <h3>Interview Details</h3>
-            <p>AI Product Engineering – Novice Badge</p>
+            <p>{student.track} – {student.badge} Badge</p>
             <span>Duration: 30 minutes</span>
           </div>
 
@@ -218,7 +263,7 @@ const BookingPage = ({ studentId }: BookingPageProps) => {
 
               <p>
                 <CalendarDays size={17} />
-                {selectedSlot.date}
+                {formatLongDate(selectedSlot.date)}
               </p>
 
               <p>

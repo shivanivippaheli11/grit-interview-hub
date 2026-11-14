@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 
 import Sidebar from "../components/Sidebar/Sidebar";
 import Header from "../components/Header/Header";
@@ -21,14 +21,18 @@ import BadgeManagement from "../features/admin/badges/BadgeManagement";
 
 import type { UserRole } from "../types/role.types";
 
+const ROLES: UserRole[] = ["student", "interviewer", "admin"];
+
 const MainLayout = () => {
-    const [role, setRole] = useState<UserRole>("student");
     const [selectedStudentId, setSelectedStudentId] = useState("STU005");
 
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const pathRole = location.pathname.split("/")[1] as UserRole;
+    const role: UserRole = ROLES.includes(pathRole) ? pathRole : "student";
 
     const handleRoleChange = (newRole: UserRole) => {
-        setRole(newRole);
         navigate(`/${newRole}/dashboard`);
     };
 

@@ -12,7 +12,9 @@ import { useState } from "react";
 import {
     getBookings,
     cancelBooking,
+    getInterviewJourney,
 } from "../../../services/bookingService";
+import { mockStudents } from "../../../data/mockStudents";
 
 import "./MyInterviews.scss";
 
@@ -76,21 +78,41 @@ const MyInterviews = ({ studentId }: MyInterviewsProps) => {
         }
     };
 
+    const student =
+        mockStudents.find((item) => item.id === studentId) ?? mockStudents[0];
+    const badgeName = `${student.track} – ${student.badge}`;
+    const journey = getInterviewJourney(studentId);
+
     const notification =
         latestBooking?.status === "confirmed"
             ? {
                 type: "confirmation",
                 title: "Interview Booking Confirmed!",
-                message: `Your interview for AI Product Mastery – Novice is scheduled for ${formattedDate(latestBooking.slot.date)} at ${latestBooking.slot.startTime} with ${latestBooking.slot.interviewerName}. Please join 5 minutes early and keep your project and preparation materials ready.`,
+                message: `Your ${badgeName} interview is on ${formattedDate(latestBooking.slot.date)} at ${latestBooking.slot.startTime} with ${latestBooking.slot.interviewerName}. Please join 5 minutes early and keep your project and preparation materials ready.`,
             }
             : latestBooking?.outcome === "pass"
                 ? {
                     type: "success",
                     title: "Congratulations! You've cleared your interview!",
-                    message:
-                        "You've successfully passed your AI Product Mastery – Novice interview. Your interview requirement is complete. Your badge is now being processed, subject to verification of all remaining requirements.",
+                    message: `You've passed your ${badgeName} interview and earned the badge. It is now visible on your dashboard and in My Badges.`,
                 }
-                : null;
+                : latestBooking?.outcome === "retake"
+                    ? {
+                        type: "warning",
+                        title: "Your interviewer has asked for a retake",
+                        message: "Review the feedback below, then book a new slot when you're ready.",
+                    }
+                    : latestBooking?.outcome === "fail"
+                        ? {
+                            type: "warning",
+                            title: "You didn't clear this interview",
+                            message: "Work on the areas in your interviewer's feedback, then book another attempt.",
+                        }
+                        : null;
+
+    const canRebook =
+        upcomingBookings.length === 0 &&
+        (journey.state === "retake" || journey.state === "failed");
 
     const renderInterviewCard = (
         booking: (typeof interviews)[number]
@@ -220,17 +242,27 @@ const MyInterviews = ({ studentId }: MyInterviewsProps) => {
 
                 <div className="no-interview-card">
                     <CalendarDays size={48} />
-                    <h3>No Interview Scheduled Yet</h3>
-                    <p>
-                        You're ready for your interview! Congratulations!
-                        You've completed all the required skills for your
-                        AI Product Mastery – Novice badge. Book your
-                        interview slot to take the final step towards
-                        earning your badge.
-                    </p>
-                    <button onClick={() => navigate("/student/book-interview")}>
-                        Book Interview
-                    </button>
+                    {journey.canBook ? (
+                        <>
+                            <h3>No Interview Scheduled Yet</h3>
+                            <p>
+                                You've completed all the required skills for
+                                your {badgeName} badge. Book your interview
+                                slot to take the final step towards earning it.
+                            </p>
+                            <button onClick={() => navigate("/student/book-interview")}>
+                                Book Interview
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <h3>Interview not available yet</h3>
+                            <p>
+                                Complete all required skills to unlock your
+                                interview booking.
+                            </p>
+                        </>
+                    )}
                 </div>
             </div>
         );
@@ -247,6 +279,16 @@ const MyInterviews = ({ studentId }: MyInterviewsProps) => {
                 <div className={`student-notification ${notification.type}`}>
                     <strong>{notification.title}</strong>
                     <p>{notification.message}</p>
+                    {canRebook && (
+                        <button
+                            className="rebook-button"
+                            onClick={() => navigate("/student/book-interview")}
+                        >
+                            {journey.state === "retake"
+                                ? "Book Retake"
+                                : "Book Another Attempt"}
+                        </button>
+                    )}
                 </div>
             )}
 

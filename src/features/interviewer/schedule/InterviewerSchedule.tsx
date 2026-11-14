@@ -16,9 +16,20 @@ import type {
     InterviewSlot,
 } from "../../../types/booking.types";
 import "./InterviewerSchedule.scss";
+import { mockStudents } from "../../../data/mockStudents";
 
 const INTERVIEWER_ID = "INT001";
 const INTERVIEWER_NAME = "Ananya Sharma";
+
+const convertToSortable = (time: string) => {
+    const [clock, period] = time.split(" ");
+    const [hours, minutes] = clock.split(":").map(Number);
+    const hours24 = (hours % 12) + (period === "PM" ? 12 : 0);
+    return `${String(hours24).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+};
+
+const getStudentName = (studentId: string) =>
+    mockStudents.find((student) => student.id === studentId)?.name ?? studentId;
 
 export default function InterviewerSchedule() {
     const [date, setDate] = useState("2026-11-18");
@@ -27,11 +38,18 @@ export default function InterviewerSchedule() {
     const [startTime, setStartTime] = useState("10:00");
     const [error, setError] = useState("");
 
-    const schedule = bookings.filter(
-        (booking) =>
-            booking.slot.interviewerId === INTERVIEWER_ID &&
-            booking.slot.date === date
-    );
+    const schedule = bookings
+        .filter(
+            (booking) =>
+                booking.slot.interviewerId === INTERVIEWER_ID &&
+                booking.slot.date === date &&
+                booking.status !== "cancelled"
+        )
+        .sort((a, b) =>
+            convertToSortable(a.slot.startTime).localeCompare(
+                convertToSortable(b.slot.startTime)
+            )
+        );
 
     const availableSlots = slots.filter(
         (slot) =>
@@ -128,7 +146,7 @@ export default function InterviewerSchedule() {
                             const isBooked = bookings.some(
                                 (booking) =>
                                     booking.slot.id === slot.id &&
-                                    booking.status === "confirmed"
+                                    booking.status !== "cancelled"
                             );
 
                             return (
@@ -193,15 +211,27 @@ function InterviewCard({
 }) {
     const [outcome, setOutcome] = useState<InterviewOutcome>("pass");
     const [feedback, setFeedback] = useState("");
+    const [error, setError] = useState("");
 
     const isCompleted = booking.status === "completed";
+
+    const handleSubmit = () => {
+        try {
+            onSave(booking.id, outcome, feedback);
+            setError("");
+        } catch (err) {
+            setError(
+                err instanceof Error ? err.message : "Unable to save the outcome."
+            );
+        }
+    };
 
     return (
         <div className="schedule-card">
             <div className="schedule-card-header">
                 <div>
-                    <h4>{booking.studentId}</h4>
-                    <p>{booking.track} · {booking.badge}</p>
+                    <h4>{getStudentName(booking.studentId)}</h4>
+                    <p>{booking.studentId} · {booking.track} · {booking.badge}</p>
                 </div>
 
                 <span className={`schedule-status ${booking.outcome || "confirmed"}`}>
@@ -222,6 +252,7 @@ function InterviewCard({
                     <h5>Record Interview Outcome</h5>
 
                     <select
+                        aria-label="Interview outcome"
                         value={outcome}
                         onChange={(e) =>
                             setOutcome(e.target.value as InterviewOutcome)
@@ -229,18 +260,23 @@ function InterviewCard({
                     >
                         <option value="pass">Pass</option>
                         <option value="fail">Fail</option>
-                        <option value="retake">Retake</option>
+                        <option value="retake">Retake later</option>
                     </select>
 
                     <textarea
-                        placeholder="Enter interview feedback"
+                        aria-label="Interview feedback"
+                        placeholder={
+                            outcome === "pass"
+                                ? "Feedback for the student (optional)"
+                                : "Feedback for the student (required)"
+                        }
                         value={feedback}
                         onChange={(e) => setFeedback(e.target.value)}
                     />
 
-                    <button
-                        onClick={() => onSave(booking.id, outcome, feedback)}
-                    >
+                    {error && <p className="availability-error">{error}</p>}
+
+                    <button onClick={handleSubmit}>
                         Submit Outcome
                     </button>
                 </div>

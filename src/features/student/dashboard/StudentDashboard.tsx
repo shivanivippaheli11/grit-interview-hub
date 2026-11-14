@@ -1,7 +1,7 @@
 
 import { mockStudents } from "../../../data/mockStudents";
 import { useNavigate } from "react-router-dom";
-import { getStudentBadgeRecord } from "../../../services/badgeService";
+import { getInterviewJourney } from "../../../services/bookingService";
 import ProgressCard from "./ProgressCard";
 import SkillsList from "./SkillsList";
 import InterviewStatusCard from "./InterviewStatusCard";
@@ -17,8 +17,18 @@ const StudentDashboard = ({ studentId }: StudentDashboardProps) => {
 
   const navigate = useNavigate();
 
-  const badgeRecord = getStudentBadgeRecord(student.id);
-  const isNullified = badgeRecord?.nullified ?? false;
+  const journey = getInterviewJourney(student.id);
+  const isNullified = journey.state === "nullified";
+  const badgeName = `${student.track} – ${student.badge}`;
+
+  const badgeChip =
+    journey.state === "passed"
+      ? { className: "earned", text: `${student.badge} Badge · Earned` }
+      : journey.state === "nullified"
+        ? { className: "nullified", text: "Badge Nullified" }
+        : journey.state === "under-review"
+          ? { className: "under-review", text: "Badge Under Review" }
+          : { className: "", text: `${student.badge} Badge · Not earned yet` };
 
   return (
     <div className="student-dashboard">
@@ -35,8 +45,9 @@ const StudentDashboard = ({ studentId }: StudentDashboardProps) => {
         <div>
           <h3>Hello, {student.name}! 👋</h3>
           <p>
-            Keep progressing towards your
-            {` ${student.track}`} badge.
+            {journey.state === "passed"
+              ? `You've earned your ${badgeName} badge. Great work!`
+              : `Keep progressing towards your ${badgeName} badge.`}
           </p>
         </div>
       </div>
@@ -50,9 +61,7 @@ const StudentDashboard = ({ studentId }: StudentDashboardProps) => {
         <div className="badge-card">
           <p>Current Track</p>
           <h3>{student.track}</h3>
-          <span>
-            {isNullified ? "Badge Nullified" : `${student.badge} Badge`}
-          </span>
+          <span className={badgeChip.className}>{badgeChip.text}</span>
         </div>
       </div>
 
@@ -66,9 +75,10 @@ const StudentDashboard = ({ studentId }: StudentDashboardProps) => {
         <SkillsList skills={student.skills} />
 
         <InterviewStatusCard
-          status={student.interviewStatus}
-          isNullified={isNullified}
+          journey={journey}
+          badgeName={badgeName}
           onBook={() => navigate("/student/book-interview")}
+          onViewInterviews={() => navigate("/student/interviews")}
         />
       </div>
     </div>
