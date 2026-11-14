@@ -1,0 +1,122 @@
+
+
+@use "../../../styles/variables" as vars;
+
+.admin-interviews {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.page-heading {
+  h2 {
+    margin: 0 0 5px;
+    font-size: 24px;
+  }
+
+  p {
+    margin: 0;
+    color: vars.$text-secondary;
+  }
+}
+
+.interview-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+
+  > div {
+    padding: 20px;
+    background: white;
+    border: 1px solid vars.$border-color;
+    border-radius: vars.$card-radius;
+  }
+
+  span {
+    color: vars.$text-secondary;
+    font-size: 14px;
+  }
+
+  h3 {
+    margin: 8px 0 0;
+    font-size: 24px;
+  }
+}
+
+.interview-table-container {
+  padding: 20px;
+  background: white;
+  border: 1px solid vars.$border-color;
+  border-radius: vars.$card-radius;
+
+  h3 {
+    margin-bottom: 18px;
+    font-size: 17px;
+  }
+}
+
+.interview-table {
+  th {
+    color: vars.$text-secondary;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 14px 12px;
+    vertical-align: middle;
+    font-size: 13px;
+  }
+
+  td small {
+    display: block;
+    margin-top: 4px;
+    color: vars.$text-secondary;
+  }
+}
+
+.interview-status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+
+  &.confirmed,
+  &.booked,
+  &.pass {
+    background: #eaf8f1;
+    color: vars.$success-color;
+  }
+
+  &.not-booked,
+  &.retake {
+    background: #fff6e8;
+    color: vars.$warning-color;
+  }
+
+  &.not-eligible,
+  &.fail,
+  &.cancelled {
+    background: #fff0f0;
+    color: vars.$danger-color;
+  }
+
+  &.completed {
+    background: #eef0ff;
+    color: vars.$primary-color;
+  }
+}
+
+@media (max-width: 900px) {
+  .interview-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 550px) {
+  .interview-summary {
+    grid-template-columns: 1fr;
+  }
+}

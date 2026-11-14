@@ -1,0 +1,201 @@
+
+@use "../../../styles/variables" as vars;
+
+.student-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.dashboard-heading h2 {
+  font-size: 25px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.dashboard-heading p,
+.progress-card p,
+.badge-card p,
+.skills-card > p {
+  color: vars.$text-secondary;
+  font-size: 14px;
+}
+
+.welcome-banner {
+  background: linear-gradient(110deg, #635bff, #8580ff);
+  color: white;
+  padding: 28px;
+  border-radius: vars.$card-radius;
+}
+
+.welcome-banner h3 {
+  font-size: 22px;
+}
+
+.welcome-banner p {
+  margin-bottom: 0;
+  opacity: 0.9;
+}
+
+.dashboard-grid,
+.dashboard-bottom {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.progress-card,
+.badge-card,
+.skills-card,
+.interview-card {
+  background: white;
+  border: 1px solid vars.$border-color;
+  border-radius: vars.$card-radius;
+  padding: 22px;
+}
+
+.progress-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress-card h2 {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.progress-icon,
+.interview-card-icon {
+  background: #eeedff;
+  color: vars.$primary-color;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.progress-track {
+  height: 8px;
+  background: #eeeef5;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 18px 0 12px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: vars.$success-color;
+  border-radius: 20px;
+}
+
+.progress-footer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: vars.$success-color;
+  font-size: 13px;
+}
+
+.badge-card h3 {
+  font-size: 21px;
+}
+
+.badge-card span {
+  display: inline-block;
+  padding: 7px 12px;
+  background: #eeedff;
+  color: vars.$primary-color;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.skills-list {
+  margin-top: 20px;
+}
+
+.skill-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid vars.$border-color;
+  gap: 10px;
+}
+
+.skill-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.skill-status {
+  font-size: 12px;
+  color: vars.$success-color;
+}
+
+.interview-card {
+  background: #f5f4ff;
+  border-color: #e4e1ff;
+}
+
+.status-label {
+  display: block;
+  margin-top: 16px;
+  color: vars.$primary-color;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.interview-card h3 {
+  font-size: 21px;
+  margin: 12px 0;
+}
+
+.interview-card p {
+  color: vars.$text-secondary;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.book-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: vars.$primary-color;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 18px;
+  margin-top: 20px;
+}
+
+.book-button:hover {
+  background: #5048e5;
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid,
+  .dashboard-bottom {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome-banner {
+    padding: 20px;
+  }
+
+  .progress-card,
+  .badge-card,
+  .skills-card,
+  .interview-card {
+    padding: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-heading h2 {
+    font-size: 21px;
+  }
+
+  .skill-item {
+    align-items: flex-start;
+  }
+}

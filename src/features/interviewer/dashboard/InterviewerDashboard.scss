@@ -1,0 +1,147 @@
+
+@use "../../../styles/variables" as vars;
+
+.interviewer-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.interviewer-dashboard-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h2 {
+        margin: 0 0 5px;
+        font-size: 24px;
+    }
+
+    p {
+        margin: 0;
+        color: vars.$text-secondary;
+    }
+
+    > span {
+        color: vars.$text-secondary;
+        font-size: 14px;
+    }
+}
+
+.interviewer-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.interviewer-summary-card {
+    padding: 20px;
+    background: white;
+    border: 1px solid vars.$border-color;
+    border-radius: vars.$card-radius;
+
+    p {
+        margin: 14px 0 5px;
+        color: vars.$text-secondary;
+        font-size: 13px;
+    }
+
+    h3 {
+        margin: 0;
+        font-size: 26px;
+    }
+}
+
+.summary-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: vars.$primary-color;
+    background: #f0efff;
+    border-radius: 10px;
+}
+
+.upcoming-interviews-section {
+    padding: 20px;
+    background: white;
+    border: 1px solid vars.$border-color;
+    border-radius: vars.$card-radius;
+}
+
+.section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+
+    h3 {
+        margin: 0;
+        font-size: 17px;
+    }
+
+    span {
+        color: vars.$text-secondary;
+        font-size: 13px;
+    }
+}
+
+.upcoming-interview-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+    border-top: 1px solid vars.$border-color;
+
+    h4 {
+        margin: 0 0 5px;
+        font-size: 14px;
+    }
+
+    p {
+        margin: 0;
+        color: vars.$text-secondary;
+        font-size: 12px;
+    }
+}
+
+.upcoming-interview-date {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+}
+
+.dashboard-booking-status {
+    padding: 5px 10px;
+    color: vars.$success-color;
+    background: #eaf8f1;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.dashboard-empty-state {
+    padding: 20px 0;
+    color: vars.$text-secondary;
+    font-size: 13px;
+}
+
+@media (max-width: 900px) {
+    .interviewer-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .interviewer-dashboard-heading,
+    .upcoming-interview-item {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .interviewer-summary-grid {
+        grid-template-columns: 1fr;
+    }
+}

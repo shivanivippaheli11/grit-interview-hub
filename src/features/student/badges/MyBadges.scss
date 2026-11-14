@@ -1,0 +1,158 @@
+
+@use "../../../styles/variables" as vars;
+
+.my-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.badges-heading {
+    h2 {
+        margin: 0 0 5px;
+        font-size: 24px;
+    }
+
+    p {
+        margin: 0;
+        color: vars.$text-secondary;
+    }
+}
+
+.my-badge-card,
+.badge-interview-history {
+    padding: 24px;
+    background: white;
+    border: 1px solid vars.$border-color;
+    border-radius: vars.$card-radius;
+}
+
+.my-badge-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.my-badge-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 65px;
+    height: 65px;
+    flex-shrink: 0;
+    color: vars.$primary-color;
+    background: #f0efff;
+    border-radius: 16px;
+}
+
+.my-badge-details {
+    h3 {
+        margin: 5px 0 10px;
+        font-size: 20px;
+    }
+}
+
+.badge-track {
+    color: vars.$text-secondary;
+    font-size: 13px;
+}
+
+.badge-status,
+.interview-outcome {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    text-transform: capitalize;
+
+    &.awarded,
+    &.pass {
+        color: vars.$success-color;
+        background: #eaf8f1;
+    }
+
+    &.pending,
+    &.retake {
+        color: vars.$warning-color;
+        background: #fff6e8;
+    }
+
+    &.nullified,
+    &.fail {
+        color: vars.$danger-color;
+        background: #fff0f0;
+    }
+}
+
+.badge-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 10px;
+
+    h4 {
+        margin: 0 0 5px;
+        font-size: 14px;
+    }
+
+    p {
+        margin: 0;
+        font-size: 13px;
+    }
+
+    &.awarded {
+        color: vars.$success-color;
+        background: #eaf8f1;
+    }
+
+    &.pending,
+    &.flagged {
+        color: vars.$warning-color;
+        background: #fff6e8;
+    }
+
+    &.nullified {
+        color: vars.$danger-color;
+        background: #fff0f0;
+    }
+}
+
+.badge-interview-history {
+    h3 {
+        margin: 0 0 16px;
+        font-size: 17px;
+    }
+
+    > p {
+        color: vars.$text-secondary;
+        font-size: 13px;
+    }
+}
+
+.badge-interview-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 0;
+    border-top: 1px solid vars.$border-color;
+
+    h4 {
+        margin: 0 0 5px;
+        font-size: 14px;
+    }
+
+    p {
+        margin: 3px 0;
+        color: vars.$text-secondary;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 550px) {
+    .badge-interview-item {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

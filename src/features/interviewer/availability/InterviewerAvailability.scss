@@ -1,0 +1,129 @@
+
+@use "../../../styles/variables" as vars;
+
+.interviewer-availability {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.availability-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h2 {
+        margin: 0 0 5px;
+        font-size: 24px;
+    }
+
+    p {
+        margin: 0;
+        color: vars.$text-secondary;
+    }
+
+    input {
+        padding: 9px;
+        border: 1px solid vars.$border-color;
+        border-radius: 8px;
+    }
+}
+
+.availability-form-card,
+.availability-slots-card {
+    padding: 20px;
+    background: white;
+    border: 1px solid vars.$border-color;
+    border-radius: vars.$card-radius;
+
+    h3 {
+        margin: 0 0 16px;
+        font-size: 17px;
+    }
+}
+
+.availability-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+
+    > div {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    label {
+        font-size: 13px;
+        color: vars.$text-secondary;
+    }
+
+    input {
+        padding: 9px;
+        border: 1px solid vars.$border-color;
+        border-radius: 8px;
+    }
+
+    button {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 14px;
+        color: white;
+        background: vars.$primary-color;
+        border: 0;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+}
+
+.availability-slot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-top: 1px solid vars.$border-color;
+
+    button {
+        color: vars.$danger-color;
+        background: transparent;
+        border: 0;
+        cursor: pointer;
+    }
+}
+
+.slot-time {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+}
+
+.booked-label {
+    color: vars.$success-color;
+    font-size: 12px;
+}
+
+.empty-availability {
+    color: vars.$text-secondary;
+    font-size: 13px;
+}
+
+.availability-error {
+    margin: 12px 0 0;
+    color: vars.$danger-color;
+    font-size: 13px;
+}
+
+@media (max-width: 650px) {
+    .availability-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .availability-form {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

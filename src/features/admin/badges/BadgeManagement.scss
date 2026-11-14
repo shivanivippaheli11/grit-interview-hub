@@ -1,0 +1,83 @@
+
+@use "../../../styles/variables" as vars;
+
+.badge-management {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .page-heading {
+    h2 {
+      margin-bottom: 5px;
+      font-size: 24px;
+    }
+
+    p {
+      margin: 0;
+      color: vars.$text-secondary;
+    }
+  }
+
+  .badge-table-container {
+    padding: 20px;
+    background: white;
+    border: 1px solid vars.$border-color;
+    border-radius: vars.$card-radius;
+
+    h3 {
+      margin-bottom: 18px;
+      font-size: 17px;
+    }
+  }
+
+  .badge-table {
+    th {
+      color: vars.$text-secondary;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 14px 12px;
+      vertical-align: middle;
+      font-size: 13px;
+    }
+
+    small {
+      display: block;
+      margin-top: 4px;
+      color: vars.$text-secondary;
+    }
+  }
+
+  .badge-status {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+
+    &.active {
+      color: vars.$success-color;
+      background: #eaf8f1;
+    }
+
+    &.nullified {
+      color: vars.$danger-color;
+      background: #fff0f0;
+    }
+  }
+
+  .badge-action {
+    padding: 7px 12px;
+    border: 0;
+    border-radius: 7px;
+    background: #fff6e8;
+    color: vars.$warning-color;
+    font-size: 12px;
+
+    &.nullify {
+      background: #fff0f0;
+      color: vars.$danger-color;
+    }
+  }
+}

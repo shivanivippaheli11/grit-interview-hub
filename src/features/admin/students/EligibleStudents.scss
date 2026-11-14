@@ -1,0 +1,114 @@
+
+@use "../../../styles/variables" as vars;
+
+.eligible-students {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.page-heading {
+  h2 {
+    margin: 0 0 5px;
+    font-size: 24px;
+  }
+
+  p {
+    margin: 0;
+    color: vars.$text-secondary;
+  }
+}
+
+.student-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+
+  > div {
+    padding: 20px;
+    background: white;
+    border: 1px solid vars.$border-color;
+    border-radius: vars.$card-radius;
+  }
+
+  span {
+    color: vars.$text-secondary;
+    font-size: 14px;
+  }
+
+  h3 {
+    margin: 8px 0 0;
+    font-size: 24px;
+  }
+}
+
+.student-table-container {
+  padding: 20px;
+  background: white;
+  border: 1px solid vars.$border-color;
+  border-radius: vars.$card-radius;
+
+  h3 {
+    margin-bottom: 18px;
+    font-size: 17px;
+  }
+}
+
+.student-table {
+  th {
+    color: vars.$text-secondary;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 14px 12px;
+    vertical-align: middle;
+    font-size: 13px;
+  }
+
+  td small {
+    display: block;
+    margin-top: 4px;
+    color: vars.$text-secondary;
+  }
+}
+
+.student-status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+
+  &.eligible,
+  &.booked,
+  &.pass {
+    background: #eaf8f1;
+    color: vars.$success-color;
+  }
+
+  &.in-progress,
+  &.not-booked,
+  &.retake {
+    background: #fff6e8;
+    color: vars.$warning-color;
+  }
+
+  &.fail {
+    background: #fff0f0;
+    color: vars.$danger-color;
+  }
+
+  &.completed {
+    background: #eef0ff;
+    color: vars.$primary-color;
+  }
+}
+
+@media (max-width: 650px) {
+  .student-summary {
+    grid-template-columns: 1fr;
+  }
+}

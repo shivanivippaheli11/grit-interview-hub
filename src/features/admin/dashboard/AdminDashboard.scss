@@ -1,0 +1,178 @@
+
+@use "../../../styles/variables" as vars;
+
+.admin-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.admin-dashboard-heading {
+    h2 {
+        margin: 0 0 5px;
+        font-size: 24px;
+    }
+
+    p {
+        margin: 0;
+        color: vars.$text-secondary;
+    }
+}
+
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.admin-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px;
+    background: white;
+    border: 1px solid vars.$border-color;
+    border-radius: vars.$card-radius;
+
+    p {
+        margin: 0 0 6px;
+        color: vars.$text-secondary;
+        font-size: 13px;
+    }
+
+    h3 {
+        margin: 0;
+        font-size: 25px;
+    }
+}
+
+.admin-stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 10px;
+
+    &.purple {
+        color: vars.$primary-color;
+        background: #f0efff;
+    }
+
+    &.green {
+        color: vars.$success-color;
+        background: #eaf8f1;
+    }
+
+    &.orange {
+        color: vars.$warning-color;
+        background: #fff6e8;
+    }
+
+    &.blue {
+        color: #3985d6;
+        background: #edf5ff;
+    }
+
+    &.red {
+        color: vars.$danger-color;
+        background: #fff0f0;
+    }
+}
+
+.recent-interviews-card {
+    padding: 20px;
+    background: white;
+    border: 1px solid vars.$border-color;
+    border-radius: vars.$card-radius;
+}
+
+.recent-interviews-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+
+    h3 {
+        margin: 0;
+        font-size: 17px;
+    }
+
+    span {
+        color: vars.$text-secondary;
+        font-size: 13px;
+    }
+}
+
+.admin-table-wrapper {
+    overflow-x: auto;
+}
+
+.admin-interviews-table {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: nowrap;
+
+    th,
+    td {
+        padding: 13px 12px;
+        text-align: left;
+        border-bottom: 1px solid vars.$border-color;
+        font-size: 13px;
+    }
+
+    th {
+        color: vars.$text-secondary;
+        font-weight: 500;
+        background: vars.$background-color;
+    }
+
+    td {
+        color: vars.$text-primary;
+    }
+
+    tbody tr:last-child td {
+        border-bottom: 0;
+    }
+}
+
+.admin-booking-status {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    text-transform: capitalize;
+
+    &.confirmed {
+        color: vars.$success-color;
+        background: #eaf8f1;
+    }
+
+    &.completed {
+        color: #3985d6;
+        background: #edf5ff;
+    }
+
+    &.cancelled {
+        color: vars.$danger-color;
+        background: #fff0f0;
+    }
+}
+
+.admin-empty-state {
+    color: vars.$text-secondary;
+    font-size: 13px;
+}
+
+@media (max-width: 900px) {
+    .admin-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 550px) {
+    .admin-stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
